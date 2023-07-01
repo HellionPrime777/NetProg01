@@ -5,57 +5,105 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Desktop"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="600" Width="800">
+    <Window.Resources>
+       
+        <Style TargetType="TextBlock">
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Background" Value= "LightGray" />
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="Margin" Value="10" />
+            <Setter Property="Background" Value="#0078D7" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Padding" Value="10" />
+            <Setter Property="Width" Value="150" />
+            <Setter Property="Height" Value="50" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="10">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+       
+    </Window.Resources>
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Grid.Column="0" Background="LightSlateGray">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0">Login:</TextBlock>
+            <TextBlock Grid.Row="1" Grid.Column="0">Password:</TextBlock>
+            <TextBox Grid.Row="0" Grid.Column="1" x:Name="tbLogin" Text="{Binding Login}" />
+            <TextBox Grid.Row="1" Grid.Column="1" x:Name="tbPassword" Text="{Binding Password}" />
+            <Button Grid.Row="2" Grid.Column="1" Name="btnLogin" Command="{Binding LoginCommand}">Login</Button>
+            <TextBlock Grid.Row="3" Grid.Column="0">Message to:</TextBlock>
+            <TextBox Grid.Row="3" Grid.Column="1" x:Name="tbTo" Text="{Binding To}" />
+        </Grid>
+        <Grid Grid.Row="1" Grid.Column="0" Background="LightSlateGray">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <TextBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="3" TextWrapping="Wrap"
+                     Height="140" TextAlignment="Left" AcceptsReturn="True" x:Name="tbMessage" Text="{Binding Message}" />
 
-        <StackPanel Grid.Row="0" Orientation="Horizontal">
-            <TextBlock Text="Login:" VerticalAlignment="Center" Margin="10"/>
-            <TextBox x:Name="loginTextBox" Width="200" Margin="10"/>
-        </StackPanel>
+            <Button Grid.Row="3" Grid.Column="1" Name="btnSend" IsEnabled="False" Command="{Binding SendCommand}">Send</Button>
+        </Grid>
+        <Grid Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Background="LightSlateGray">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition Height=".5*"></RowDefinition>
+                <RowDefinition Height=".5*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <ScrollViewer Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="2">
+                <TextBlock  x:Name="tbForMessage" TextAlignment="Left" ></TextBlock>
+            </ScrollViewer>
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <TextBlock Text="Password:" VerticalAlignment="Center" Margin="10"/>
-            <TextBox x:Name="passwordTextBox" Width="200" Margin="10" />
-        </StackPanel>
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal">
-            <TextBlock Text="To:" VerticalAlignment="Center" Margin="10"/>
-            <TextBox x:Name="toLoginTextBox" Width="200" Margin="10"/>
-        </StackPanel>
-
-        <StackPanel Grid.Row="3">
-            <TextBlock Text="Message:" Margin="10"/>
-            <TextBox x:Name="messageTextBox" Width="400" Height="100" Margin="10"/>
-        </StackPanel>
-
-        <StackPanel Grid.Row="4">
-            <Button Content="Get Message" Width="150" Margin="10" Click="GetMessage_Click"/>
-            <Button Content="Send Message" Width="150" Margin="10" Click="SendMessage_Click"/>
-
-            <ListView x:Name="messagesListView" Margin="10">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel>
-                            <TextBlock>
-                            <Run Text="From: "/>
-                            <Run Text="{Binding From.Login}" FontWeight="Bold"/>
-                            </TextBlock>
-                            <TextBlock>
-                            <Run Text="Time: "/>
-                            <Run Text="{Binding CreatedAt}" FontStyle="Italic"/>
-                            </TextBlock>
-                            <TextBlock Text="{Binding Text}"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </StackPanel>
+            <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Name="btnGetMessage" IsEnabled="False">GetMessage</Button>
+            <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Name="tbInfo"  Text="{Binding Info}" />
+        </Grid>
     </Grid>
-
 </Window>

@@ -19,42 +19,54 @@ public class Core
     }
 
     private List<Message> _messages = new List<Message>();
+    private List<Client> _clients = new List<Client>();
 
     private T Deserialize<T>(Data data) where T : class
     {
         return JsonSerializer.Deserialize<T>(data.Content);
     }
 
-    private Dictionary<string, string> loginCredentials = new Dictionary<string, string>();
+    private Client FindClient(LoginRequest request)
+    {
+
+        foreach (var client in _clients)
+        {
+            if (client.Login == request.Me.Login)
+            {
+                if (client.Password == request.Me.Password)
+                {
+                    return client;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+        _clients.Add(new Client() { Login = request.Me.Login, Password = request.Me.Password });
+        return _clients[_clients.Count - 1];
+    }
 
     private Data HandleLoginRequest(Data data)
     {
         var request = Deserialize<LoginRequest>(data);
-
-        if (!loginCredentials.ContainsKey(request.Me.Login))
+        if (FindClient(request) != null)
         {
-            loginCredentials[request.Me.Login] = request.Me.Password;
+            return Data.Create(new LoginResponse
+            {
+                Success = true,
+                MessagesCount = _messages.Where(x => x.To.Login == request.Me.Login).Count(),
+            });
         }
         else
         {
-            if (loginCredentials[request.Me.Login] != request.Me.Password)
+            return Data.Create(new LoginResponse
             {
-                return Data.Create(new LoginResponse
-                {
-                    Success = false,
-                    MessagesCount = 0
-                });
-            }
+                Success = false,
+            });
         }
 
-        return Data.Create(new LoginResponse
-        {
-            Success = true,
-            MessagesCount = _messages.Count(x => x.To.Login == request.Me.Login)
-        });
     }
-
-
 
     private Data HandleSendMessageRequest(Data data)
     {
@@ -70,7 +82,7 @@ public class Core
 
         var clientMessages = _messages.Where(x => x.To.Login == request.Me.Login).ToList();
         _messages.RemoveAll(x => x.To.Login == request.Me.Login);
-        
+
         return Data.Create(new GetMessagesResponse
         {
             Messages = clientMessages

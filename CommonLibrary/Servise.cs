@@ -10,7 +10,7 @@ using System.Text.Json;
 using CommonLibrary.Requests;
 using CommonLibrary.Responses;
 
-namespace Client;
+namespace CommonLibrary;
 
 public class Service
 {
@@ -48,26 +48,32 @@ public class Service
                 Me = new CommonLibrary.Client
                 {
                     Login = login,
-                    Password = password // Include the password in the request
+                    Password = password
                 }
             })));
-        return response.MessagesCount;
+        if (response.Success == true)
+        {
+            return response.MessagesCount;
+        }
+        else
+        {
+            return -1;
+        }
+
     }
 
-    public List<Message> GetMessages(string login, string password)
+    public List<Message> GetMessages(string login)
     {
         var response = ToResponse<GetMessagesResponse>(
             Send(Data.Create(new GetMessagesRequest
             {
                 Me = new CommonLibrary.Client
                 {
-                    Login = login,
-                    Password = password // Include the password in the request
+                    Login = login
                 }
             })));
         return response.Messages;
     }
-
 
     public bool SendMessage(Message message)
     {
